@@ -1,5 +1,6 @@
-package one.digitalinnovation.gof.service;
+package one.digitalinnovation.gof.service.interf;
 
+import one.digitalinnovation.exception.InformationNotFoundException;
 import one.digitalinnovation.gof.model.Cliente;
 
 /**
@@ -13,11 +14,11 @@ public interface ClienteService {
 
 	Iterable<Cliente> buscarTodos();
 
-	Cliente buscarPorId(Long id);
+	Cliente buscarPorId(Long id) throws InformationNotFoundException;
 
 	void inserir(Cliente cliente);
 
-	void atualizar(Long id, Cliente cliente);
+	void atualizar(Long id, Cliente cliente) throws InformationNotFoundException;
 
 	void deletar(Long id);
 

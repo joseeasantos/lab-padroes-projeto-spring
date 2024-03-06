@@ -2,15 +2,16 @@ package one.digitalinnovation.gof.service.impl;
 
 import java.util.Optional;
 
+import one.digitalinnovation.exception.InformationNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import one.digitalinnovation.gof.model.Cliente;
-import one.digitalinnovation.gof.model.ClienteRepository;
+import one.digitalinnovation.gof.repository.ClienteRepository;
 import one.digitalinnovation.gof.model.Endereco;
-import one.digitalinnovation.gof.model.EnderecoRepository;
-import one.digitalinnovation.gof.service.ClienteService;
-import one.digitalinnovation.gof.service.ViaCepService;
+import one.digitalinnovation.gof.repository.EnderecoRepository;
+import one.digitalinnovation.gof.service.interf.ClienteService;
+import one.digitalinnovation.gof.service.interf.ViaCepService;
 
 /**
  * Implementação da <b>Strategy</b> {@link ClienteService}, a qual pode ser
@@ -39,11 +40,16 @@ public class ClienteServiceImpl implements ClienteService {
 		return clienteRepository.findAll();
 	}
 
+	
 	@Override
-	public Cliente buscarPorId(Long id) {
+	public Cliente buscarPorId(Long id) throws InformationNotFoundException {
 		// Buscar Cliente por ID.
-		Optional<Cliente> cliente = clienteRepository.findById(id);
-		return cliente.get();
+		return getCliente(id);
+	}
+
+	private Cliente getCliente(Long id) throws InformationNotFoundException {
+		return clienteRepository.findById(id).orElseThrow(() ->
+                new InformationNotFoundException("Cliente não encontrado"));
 	}
 
 	@Override
@@ -52,12 +58,9 @@ public class ClienteServiceImpl implements ClienteService {
 	}
 
 	@Override
-	public void atualizar(Long id, Cliente cliente) {
+	public void atualizar(Long id, Cliente cliente) throws InformationNotFoundException {
 		// Buscar Cliente por ID, caso exista:
-		Optional<Cliente> clienteBd = clienteRepository.findById(id);
-		if (clienteBd.isPresent()) {
-			salvarClienteComCep(cliente);
-		}
+		salvarClienteComCep(getCliente(id));
 	}
 
 	@Override
